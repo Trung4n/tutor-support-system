@@ -6,23 +6,14 @@ import { env } from "../config/env.js";
 
 export const tokenService = {
   async generateToken(payload) {
-    // Redis Token
-    const longToken = jwt.sign(payload, env.JWT_SECRET, { expiresIn: "15s" });
-
+    const longToken = jwt.sign(payload, env.JWT_SECRET, { expiresIn: "30s" }); // Redis Token
     // Shorten token that will later be attached to URL sent back to user
     const shortToken = crypto.randomBytes(20).toString("hex");
-
     // Mapping those 2 tokens
-    await redis.set(`shorttoken:${shortToken}`, longToken, "EX", 15); // 15s
+    await redis.set(`shorttoken:${shortToken}`, longToken, "EX", 30); // 15s
 
     return shortToken;
   },
-
-  // async setToken(mail, token) {
-  //   // const otp = generateOtp();
-  //   // Store OTP with expiration
-  //   await redis.set(`token:${mail}`, token, "EX", env.OTP_EXPIRE_SEC);
-  // },
 
   async verifyToken(shorttoken) {
     // Retrieve stored Token
@@ -38,7 +29,7 @@ export const tokenService = {
   },
 
   async clearToken(shorttoken) {
-    // Delete OTP from Redis
+    // Delete Token from Redis
     await redis.del(`shorttoken:${shorttoken}`);
   },
 

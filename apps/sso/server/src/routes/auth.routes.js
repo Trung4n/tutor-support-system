@@ -2,10 +2,17 @@ import { Router } from "express";
 import {
   login,
   changePassword,
-  resetPassword,
+  sendToken,
   resetPasswordToken,
 } from "../controllers/auth.controller.js";
-import { checkUserExists, attachUserFromToken } from "../middlewares/validate.middleware.js";
+import {
+  checkUserExists,
+  attachUserFromToken,
+  validateUsername,
+  validateMail,
+  validatePassword,
+  handleValidation,
+} from "../middlewares/validate.middleware.js";
 
 export const router = Router();
 
@@ -17,6 +24,29 @@ export const router = Router();
 // router.post("/register", <middleware> ,register);
 router.post("/login", login);
 
-router.post("/reset-password", checkUserExists, resetPassword);
+router.post(
+  "/change-password",
+  ...validateUsername,
+  ...validatePassword,
+  handleValidation,
+  checkUserExists,
+  handleValidation,
+  changePassword
+);
 
-router.post("/reset-password/:token", attachUserFromToken, resetPasswordToken);
+router.post(
+  "/reset-password",
+  ...validateUsername,
+  ...validateMail,
+  handleValidation,
+  checkUserExists,
+  sendToken
+);
+
+router.post(
+  "/reset-password/:token",
+  attachUserFromToken,
+  ...validatePassword,
+  handleValidation,
+  resetPasswordToken
+);

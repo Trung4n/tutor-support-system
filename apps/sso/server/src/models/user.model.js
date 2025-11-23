@@ -24,7 +24,6 @@ userSchema.pre("save", async function (next) {
 
 // Method to compare password
 userSchema.methods.comparePassword = function (pw) {
-  console.log("concac");
   return bcrypt.compare(pw, this.password);
 };
 
