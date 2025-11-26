@@ -12,6 +12,7 @@ const noEmoji = (field) => {
 };
 
 export const checkUserExists = asyncHandler(async (req, res, next) => {
+  // user.service
   const { username } = req.body;
   const user = await User.findOne({ username });
   if (!user) return res.status(400).json({ message: "User not found" });
@@ -20,6 +21,7 @@ export const checkUserExists = asyncHandler(async (req, res, next) => {
 });
 
 export const attachUserFromToken = asyncHandler(async (req, res, next) => {
+  // delete
   const token = req.params.token;
 
   // Verify extrated Token

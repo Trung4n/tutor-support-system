@@ -46,7 +46,7 @@ router.post(
 );
 
 router.post(
-  "/reset-password/:token",
+  "/reset-password",
   attachUserFromToken,
   ...validatePassword,
   handleValidation,

@@ -12,7 +12,7 @@ import { MailService } from "@shared/notifications/service";
 // BE: resetPw: token in param, check token in redis, change pw, delete token, return 200
 
 export const login = asyncHandler(async (req, res) => {
-  // --redirect in param
+  // --redirect in query
   const { username, password, redirect } = req.body;
   const { user } = await authService.login({ username, password });
 
@@ -91,6 +91,7 @@ export const resetPasswordToken = asyncHandler(async (req, res) => {
   const token = req.params.token;
   const { username, newpassword } = req.body;
   const userId = req.userId;
+  // get token from redis to verify
 
   // Reset password
   const user = await authService.resetPassword({ userId, newpassword });
