@@ -1,6 +1,7 @@
 import { asyncHandler } from "@shared/utils/asyncHandler";
 import { authService } from "../services/auth.service.js";
-import { tokenService } from "../services/token.service.js";
+import { generateToken } from "../utils/crypto.js";
+import { RedisService } from "@shared/redis/service";
 import { env } from "../config/env.js";
 import { MailService } from "@shared/notifications/service";
 
@@ -38,17 +39,18 @@ export const login = asyncHandler(async (req, res) => {
  *       Send mail to user if an action of changing password is performed (later)
  */
 export const changePassword = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const { currentpassword, newpassword } = req.body;
+  const { username, currentpassword, newpassword } = req.body;
 
   const updatedUser = await authService.changePassword({
-    userId,
+    username,
     currentpassword,
     newpassword,
   });
+  if (!updatedUser) return res.status(400).json({ message: "Change Password fail!" });
 
   return res.status(200).json({
     message: "Password changed successfully",
+    data: updatedUser,
   });
 });
 
@@ -56,22 +58,29 @@ export const changePassword = asyncHandler(async (req, res) => {
  * @POST
  * @route /api/auth/reset-password
  * @desc Send reset password token to user's mail
- *       Generate token using tokenService.generateToken
- *       Send mail to user using MailService.sendToken (later) including reset link with token
+ *       Generate token using crypto.generateToken()
+ *       Send mail to user using MailService.sendToken including reset link with token
  */
 export const sendToken = asyncHandler(async (req, res) => {
   const { username, mail } = req.body;
+  const user = await authService.checkUserExists(username);
+  if (!user) return res.status(404).json({ message: "User not found!" });
 
-  // Generate token
-  const payload = { username: username, mail: mail };
-  const token = await tokenService.generateToken(payload); // cryto random
+  // Generate and Save Token into Redis
+  const token = await generateToken();
+  const key = `token:${token}`;
+  const value = { username, mail };
+
+  // Set value into Redis
+  RedisService.set(key, value, env.EXPIRE_SEC);
+
   // This url will be sent to user's mail attached with generated Token
-  const resetLink = `<http://localhost:4002/>reset-password?token=${token}`; // link in env
+  const resetLink = `${env.CORS_ORIGIN}/reset-password?token=${token}`; // link in env
   // Send mail to user
-  // await MailService.sendToken(mail, resetLink);
+  await MailService.sendToken(mail, resetLink);
 
   return res.status(200).json({
-    message: "Send ", //
+    message: "Token has been sent to your email",
   });
 });
 
@@ -80,25 +89,25 @@ export const sendToken = asyncHandler(async (req, res) => {
  * @route /api/auth/reset-password/:token
  * @desc Reset password using token from param
  *       Extract token from req.params
- *       Extract new password and confirm password from req.body
- *       Extract userId from req (set by attachUserFromToken middleware)
- *       Reset password using authService.resetPassword
+ *       Extract new password and username from req.body
+ *       Reset password using authService.resetPassword (username)
  *       Send mail to user if an action of resetting password is performed (later)
  */
-export const resetPasswordToken = asyncHandler(async (req, res) => {
-  const token = req.params.token;
-  const { username, newpassword } = req.body;
-  const userId = req.userId;
+export const resetPassword = asyncHandler(async (req, res) => {
+  const token = req.query.token;
+  const { newpassword } = req.body;
   // get token from redis to verify
-
+  const key = `token:${token}`;
+  const value = await RedisService.get(key);
+  if (value === null) return res.status(401).json({ message: "Unauthorized token" });
+  const username = value.username;
   // Reset password
-  const user = await authService.resetPassword({ userId, newpassword });
+  const user = await authService.resetPassword({ username, newpassword });
   if (user) {
-    // await tokenService.clearToken(token); //
-    // redis.del(`shorttoken:${shorttoken}`);
-    return res.status(200).json({ message: "" }); //
+    RedisService.del(key);
+    return res.status(200).json({ message: "Password has been resetted successfully." });
   } else {
-    return res.status(400).json({ message: "" });
+    return res.status(400).json({ message: "tuoi lon" });
   }
 });
 

@@ -6,9 +6,7 @@ export const authService = {
   async login({ username, password }) {
     const user = await User.findOne({ username });
 
-    if (!user) {
-      throw new AppError("Invalid credentials", 401);
-    }
+    if (!user) {throw new AppError("Invalid credentials", 401);}
 
     const isPasswordValid = await user.comparePassword(password);
 
@@ -43,21 +41,26 @@ export const authService = {
     return { user: userData };    
   },
 
-  async changePassword({ username, currentPassword, newPassword }) {
-    // Implementation for password change
-  },
-  async findUser({ username, mail }) {
-    const user = await User.findOne({ username: username, mail: mail });
+  async changePassword({ username, currentpassword, newpassword }) {
+    const user = await User.findOne({ username });
+    console.log(currentpassword);
+    if (!user) throw new AppError("User Not Found", 404);
+    if (!(await user.comparePassword(currentpassword)))
+      throw new AppError("Current Password do not match", 400);
+
+    user.password = newpassword;
+    await user.save();
+
     return user;
   },
-  async resetPassword({ userId, newpassword, confirm }) {
-    const user = await User.findOne({ _id: userId });
-    if (newpassword === confirm) {
-      user.password = newpassword;
-      user.save();
-    } else {
-      return null;
-    }
+  async checkUserExists(username) {
+    const user = await User.findOne({ username });
+    return user;
+  },
+  async resetPassword({ username, newpassword }) {
+    const user = await User.findOne({ username });
+    user.password = newpassword;
+    user.save();
     return user;
   },
 };
