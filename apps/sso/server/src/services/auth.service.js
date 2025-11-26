@@ -28,11 +28,7 @@ export const authService = {
       await user.save();
     }
 
-    const userData = user.toObject();
-    delete userData.password;
-    delete userData.failedLoginCount;
-
-    return { user: userData };
+    return { success: true };
   },
 
   async changePassword({ username, currentPassword, newPassword }) {

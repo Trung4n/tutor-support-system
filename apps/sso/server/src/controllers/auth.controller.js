@@ -22,12 +22,10 @@ export const login = asyncHandler(async (req, res) => {
     role: user.role,
   };
 
-  await req.session.save(); // --no save
-
   res.status(200).json({
     success: true,
     data: { user },
-    redirect: redirect,
+    redirect: redirect
   });
 });
 
