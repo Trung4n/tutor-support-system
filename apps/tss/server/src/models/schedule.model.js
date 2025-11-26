@@ -19,10 +19,9 @@ const scheduleSchema = new mongoose.Schema(
       type: String, // "11:30"
       required: true,
     },
-    subject: {
+    session: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Subject",
-      required: true,
+      ref: "Session",
     },
   },
   { timestamps: true }

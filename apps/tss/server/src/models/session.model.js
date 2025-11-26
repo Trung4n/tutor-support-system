@@ -8,9 +8,14 @@ const sessionSchema = new mongoose.Schema(
         ref: "Student",
       },
     ],
-    schedule: {
+    tutor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Schedule",
+      ref: "Tutor",
+      required: true,
+    },
+    subject: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
       required: true,
     },
     status: {

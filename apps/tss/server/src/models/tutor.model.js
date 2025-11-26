@@ -28,6 +28,10 @@ const tutorSchema = new mongoose.Schema({
       default: 0,
     },
   },
+  vector: {
+    type: [Number],
+    default: [],
+  },
 });
 
 export const Tutor = User.discriminator("tutor", tutorSchema);
