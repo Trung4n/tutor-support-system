@@ -7,8 +7,9 @@ export const sessionMiddleware = (appPrefix) =>
   session({
     store: new RedisStore({
       client: redis,
-      prefix: `${appPrefix}:sess:`,
+      prefix: `shared:sess:`, // prefix for all sessions
     }),
+    name: 'connect.sid', //same cookie for all sessions
     secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -16,5 +17,6 @@ export const sessionMiddleware = (appPrefix) =>
     cookie: {
       secure: false,
       maxAge: 1000 * 60 * 60,
+      domain: "localhost", // same domain for all sessions
     },
   });

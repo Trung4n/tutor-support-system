@@ -14,7 +14,8 @@ import { MailService } from "@shared/notifications/service";
 export const login = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   const {redirect} = req.query;
-  const { user } = await authService.login({ username, password });
+  
+  const {user} = await authService.login({ username, password });
 
   req.session.user = {
     id: user._id.toString(),
@@ -24,7 +25,6 @@ export const login = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    data: { user },
     redirect: redirect,
   });
 });
