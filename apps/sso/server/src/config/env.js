@@ -11,4 +11,5 @@ export const env = {
   NATS_STREAM: process.env.NATS_STREAM,
   NATS_CONSUMER: process.env.NATS_CONSUMER,
   NATS_DELIVERY: process.env.NATS_DELIVERY,
+  EXPIRE_SEC: process.env.EXPIRE_SEC,
 };
