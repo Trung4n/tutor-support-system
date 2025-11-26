@@ -3,10 +3,17 @@ import {
   login,
   logout,
   changePassword,
-  resetPassword,
+  sendToken,
   resetPasswordToken,
 } from "../controllers/auth.controller.js";
-import { validateLogin } from "../middlewares/validate.middleware.js";
+import {
+  checkUserExists,
+  attachUserFromToken,
+  validateUsername,
+  validateMail,
+  validatePassword,
+  handleValidation,
+} from "../middlewares/validate.middleware.js";
 
 export const router = Router();
 
@@ -17,3 +24,31 @@ router.post("/logout", logout);
 // router post /forgot-password
 // Example:
 // router.post("/register", <middleware> ,register);
+router.post("/login", login);
+
+router.post(
+  "/change-password",
+  ...validateUsername,
+  ...validatePassword,
+  handleValidation,
+  checkUserExists,
+  handleValidation,
+  changePassword
+);
+
+router.post(
+  "/reset-password",
+  ...validateUsername,
+  ...validateMail,
+  handleValidation,
+  checkUserExists,
+  sendToken
+);
+
+router.post(
+  "/reset-password",
+  attachUserFromToken,
+  ...validatePassword,
+  handleValidation,
+  resetPasswordToken
+);

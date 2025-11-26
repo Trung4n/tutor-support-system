@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js";
 import { AppError } from "@shared/utils/AppError";
+import bcrypt from "bcryptjs";
 
 export const authService = {
   async login({ username, password }) {
@@ -41,12 +42,13 @@ export const authService = {
     const user = await User.findOne({ username: username, mail: mail });
     return user;
   },
-  async resetPassword({ username, newpassword }) {
-    console.log(newpassword);
-    const user = await User.findOne({ username: username });
-    if (user) {
+  async resetPassword({ userId, newpassword, confirm }) {
+    const user = await User.findOne({ _id: userId });
+    if (newpassword === confirm) {
       user.password = newpassword;
       user.save();
+    } else {
+      return null;
     }
     return user;
   },
