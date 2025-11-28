@@ -5,11 +5,9 @@ function FormInput({ title, type, name, onChange, icon }) {
     <div className="flex flex-col w-full gap-1">
       <label className="text-sm font-semibold text-gray-700">{title}</label>
       <div className="flex items-center border border-gray-300 rounded-md overflow-hidden bg-white">
-        {/* Ô icon màu xám nhạt */}
         <div className="flex items-center justify-center bg-gray-200 h-10 w-10 text-gray-600">
           {icon}
         </div>
-        {/* Ô input */}
         <input
           type={type}
           name={name}
