@@ -1,4 +1,4 @@
-import bkLogo from "../../assets/images/BkLogo.png";
+import bkLogo from "../assets/images/BkLogo.png";
 
 export default function Footer() {
   return (

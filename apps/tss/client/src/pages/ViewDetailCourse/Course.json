@@ -1,0 +1,18 @@
+{
+  "courseId": "course-001",
+  "title": "Calculus I",
+  "tutorName": "AnLa",
+  "department": "Applied Science",
+  "semester": "Fall 2025",
+  "learningType": "Online (Google Meet)",
+  "capacity": 40,
+  "rating": 4.8,
+  "ratingCount": 1200,
+  "about": "Mock JSON file about calculus.",
+  "objectives": ["Compute derivatives", "Solve integrals", "Strengthen reasoning"],
+  "nextSession": {
+    "date": "November 4, 2025",
+    "title": "Revision for Final Exam",
+    "tutorName": "AnLa"
+  }
+}

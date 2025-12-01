@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Bell, MessageCircle } from "lucide-react";
-import bkLogo from "../../assets/images/BkLogo.png";
+import bkLogo from "../assets/images/BkLogo.png";
 
 export default function Header() {
   const [activeMenu, setActiveMenu] = useState("Home"); // state quản lý menu active
