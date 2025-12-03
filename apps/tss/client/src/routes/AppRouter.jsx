@@ -1,23 +1,38 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+
 import HomePage from "../pages/HomePage";
 import ViewCourseDetail from "../pages/ViewDetailCourse/ViewDetailCourse";
-import Support from "../pages/Support/Support.jsx";
+import Support from "../pages/Support/Support";
 import SupportQuestionDetail from "../pages/Support/Question";
-import FeedbackPage from "../pages/Feedback/Feedback";
 import SessionDetailPage from "../pages/Session/Session";
+// import LoginPage from "../pages/AuthPage/LoginPage";
+import Profile from "../pages/Profile";
+import FeedbackDetail from "../pages/Feedback/FeedbackDetail";
+import ViewFeedback from "../pages/Feedback/ViewFeedback";
+import SendFeedback from "../pages/Feedback/SendFeedback";
+import ViewTutors from "../pages/ViewTutorsPage";
+// import PrivateRouter from "./PrivateRouter"; // nếu cần dùng sau này
+
 export default function AppRouter() {
   const location = useLocation();
+
   useEffect(() => {
     const pathTitleMap = {
       "/home": "Home | Tutor Support System",
-      //   "/change-password": "Change Password | Tutor Support System",
-      //   "/reset-password": "Reset Password | Tutor Support System",
       "/view-course-detail": "Course Detail | Tutor Support System",
       "/support": "Support | Tutor Support System",
       "/support/question": "Question Detail | Tutor Support System",
       "/feedback": "Feedback | Tutor Support System",
       "/session": "Session Detail | Tutor Support System",
+
+      // // từ router 2
+      // "/login": "Login | Tutor Support System",
+      "/profile": "Profile | Tutor Support System",
+      "/viewtutor": "Tutors | Tutor Support System",
+      "/feedback/detail": "Feedback Detail | Tutor Support System",
+      "/feedbacks": "Feedback List | Tutor Support System",
+      "/send": "Send Feedback | Tutor Support System",
     };
 
     document.title = pathTitleMap[location.pathname] || "Tutor Support System";
@@ -27,15 +42,27 @@ export default function AppRouter() {
 
   return (
     <Routes>
+      {/* Redirect trang chủ */}
       <Route path="/" element={<Navigate to="/home" replace />} />
+
+      {/* ========== ROUTES TỪ FILE 1 ========== */}
       <Route path="/home" element={<HomePage />} />
-      {/* <Route path="/change-password" element={<ChangePasswordPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} /> */}
       <Route path="/Course" element={<ViewCourseDetail />} />
+      <Route path="/Course/:sessionId" element={<SessionDetailPage />} />
       <Route path="/support" element={<Support />} />
       <Route path="/support/question" element={<SupportQuestionDetail />} />
       <Route path="/feedback" element={<FeedbackPage />} />
-      <Route path="/Course/:sessionId" element={<SessionDetailPage />} />
+
+      {/* <Route path="/login" element={<LoginPage />} /> */}
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/viewtutor" element={<ViewTutors />} />
+
+      <Route path="/feedback/detail" element={<FeedbackDetail />} />
+      <Route path="/feedsback" element={<ViewFeedback />} />
+      <Route path="/send" element={<SendFeedback />} />
+
+      {/* 404 fallback */}
+      <Route path="*" element={<LoginPage />} />
     </Routes>
   );
 }
