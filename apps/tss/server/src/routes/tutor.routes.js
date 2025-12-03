@@ -1,5 +1,11 @@
 import { Router } from "express";
-// import {} from "../controllers/tutor.controller.js";
+import {
+  getTutor,
+  updateTutor,
+  getAllTutors,
+  getTutorSessions,
+  getTutorFeedbacks,
+} from "../controllers/tutor.controller.js";
 
 export const router = Router();
 
@@ -9,4 +15,9 @@ export const router = Router();
 // router.put("/:id",updateTutor);
 // router.get("/list",getAllTutors);
 // Ex: api/tutor/list?page=1&limit=10&search=abc&sort=asc&....
-// if query params not provided, use default values in controller (recommended)
+router.get("/list", getAllTutors);
+router.get("/:id", getTutor);
+router.put("/:id", updateTutor);
+
+router.get("/:id/sessions", getTutorSessions);
+router.get("/:id/feedbacks", getTutorFeedbacks);
