@@ -37,7 +37,7 @@ export default function ListItem({
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo(0, 0);
-  }
+  };
 
   const getPageNumbers = () => {
     const pageNumbers = [];

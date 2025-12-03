@@ -130,12 +130,12 @@ export default function ViewTutorsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 font-roboto text-gray-800">
+    <div className="w-full font-roboto text-gray-800">
       <Header />
-      <main className="max-w-7xl mt-20 mx-auto p-6 space-y-8">
-        <section className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="bg-[#2196f3] px-6 py-3">
-            <h2 className="text-white font-bold text-lg italic">Your Tutor</h2>
+      <main className="max-w-[1600px]  mt-20 mx-auto p-6 space-y-8">
+        <section className="bg-white rounded shadow-sm overflow-hidden">
+          <div className="bg-[#1488d8] px-6 py-3">
+            <h2 className="text-white font-bold text-2xl italic">Your Tutor</h2>
           </div>
 
           <div className="grid-cols-12 gap-4 px-6 py-3 text-xs font-bold text-gray-500 uppercase border-b hidden md:grid">
@@ -183,7 +183,7 @@ export default function ViewTutorsPage() {
             ))}
           </div>
         </section>
-        <ListItem itemList={tutors} itemTab={tutorsTab} title={"Tutors"} />
+        <ListItem itemList={tutors} itemTab={tutorsTab} title={"Tutors"} columns={4} />
       </main>
 
       {/*Footer */}

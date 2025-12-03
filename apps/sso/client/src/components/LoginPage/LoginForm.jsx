@@ -20,7 +20,7 @@ export default function LoginForm() {
     try {
       await authApi.login(username, password);
       console.log("Login thành công");
-      navigate("/dashboard");
+      window.location.href = "http://localhost:4001";
     } catch (err) {
       setShowError(true);
 
@@ -55,7 +55,6 @@ export default function LoginForm() {
         The credentials you provided cannot be determined to be authentic.
       </div>
 
-   
       <div className="mb-4">
         <label htmlFor="username" className="block text-[#333] font-semibold mb-1">
           Username
@@ -72,7 +71,6 @@ export default function LoginForm() {
         />
       </div>
 
-   
       <div className="mb-4">
         <label htmlFor="password" className="block text-[#333] font-semibold mb-1">
           Password
@@ -89,7 +87,6 @@ export default function LoginForm() {
         />
       </div>
 
-     
       <div className="flex items-center gap-2 flex-wrap">
         <button
           type="submit"
