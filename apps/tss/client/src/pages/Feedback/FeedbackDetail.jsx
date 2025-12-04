@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom"; // Added useNavigate
-import { getFeedbackById } from "./mockFeedbackData";
+import React, { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { getFeedbackById, feedbackList } from "./mockFeedbackData.js"; // ✅ import feedbackList
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import {
@@ -18,7 +18,7 @@ import {
   Underline,
 } from "lucide-react";
 
-const EditorToolbar = () => {
+const EditorToolbar = ({ disabled = false }) => {
   const tools = [
     { icon: Bold, label: "Bold" },
     { icon: Italic, label: "Italic" },
@@ -40,7 +40,10 @@ const EditorToolbar = () => {
           key={index}
           type="button"
           title={Tool.label}
-          className="w-10 h-10 flex-shrink-0 flex items-center justify-center hover:bg-gray-100 rounded transition-colors text-gray-600"
+          disabled={disabled}
+          className={`w-10 h-10 flex-shrink-0 flex items-center justify-center rounded transition-colors ${
+            disabled ? "text-gray-400" : "hover:bg-gray-100 text-gray-600"
+          }`}
         >
           <Tool.icon className="w-5 h-5" />
         </button>
@@ -49,13 +52,16 @@ const EditorToolbar = () => {
   );
 };
 
-// Helper: Consistent Form Row Layout
 const FormRow = ({ label, children, alignTop = false }) => (
   <div
-    className={`grid grid-cols-1 md:grid-cols-[140px_1fr] lg:grid-cols-[180px_1fr] gap-4 md:gap-8 ${alignTop ? "items-start" : "items-center"}`}
+    className={`grid grid-cols-1 md:grid-cols-[140px_1fr] lg:grid-cols-[180px_1fr] gap-4 md:gap-8 ${
+      alignTop ? "items-start" : "items-center"
+    }`}
   >
     <label
-      className={`text-xl sm:text-2xl lg:text-3xl font-bold font-roboto text-gray-800 ${alignTop ? "pt-3" : ""}`}
+      className={`text-xl sm:text-2xl lg:text-3xl font-bold font-roboto text-gray-800 ${
+        alignTop ? "pt-3" : ""
+      }`}
     >
       {label}
     </label>
@@ -65,11 +71,10 @@ const FormRow = ({ label, children, alignTop = false }) => (
 
 export default function FeedbackDetail() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate(); // Hook initialized here
+  const navigate = useNavigate();
   const id = searchParams.get("id");
 
-  // State for the text editor
-  const [content, setContent] = useState("");
+  const [replyContent, setReplyContent] = useState("");
 
   const feedbackItem = getFeedbackById(id);
 
@@ -85,10 +90,36 @@ export default function FeedbackDetail() {
     );
   }
 
+  const isReplied = feedbackItem.replied;
+
+  useEffect(() => {
+    if (isReplied && feedbackItem.replyContent) {
+      setReplyContent(feedbackItem.replyContent);
+    }
+  }, [feedbackItem, isReplied]);
+
   const handleSubmit = () => {
-    // Add your submit logic here (e.g., API call)
-    console.log("Submitting reply:", content);
+    if (!replyContent) {
+      alert("Vui lòng nhập nội dung phản hồi!");
+      return;
+    }
+
+    const index = feedbackList.findIndex((f) => f.id === feedbackItem.id);
+    if (index !== -1) {
+      feedbackList[index].replied = true;
+      feedbackList[index].replyContent = replyContent;
+      feedbackList[index].replyDate = new Date().toLocaleString("vi-VN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+    }
+
     navigate("/feedbacks");
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -102,7 +133,7 @@ export default function FeedbackDetail() {
           >
             <ArrowLeft className="w-6 h-6 sm:w-8 sm:h-8 text-[#0a1f44]" />
           </button>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0a1f44] font-roboto">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0a1f44] font-roboto">
             Back to Feedback
           </h1>
         </div>
@@ -123,40 +154,51 @@ export default function FeedbackDetail() {
             </div>
 
             <div className="border-t pt-4">
-              {feedbackItem.type === "feedback" ? (
-                <p className="text-lg text-gray-700">{feedbackItem.content}</p>
-              ) : (
-                <p className="text-lg font-bold text-gray-800">{feedbackItem.title}</p>
-              )}
+              <p className=" font-bold text-xl">{feedbackItem.title}</p>
+              <p className="text-lg">{feedbackItem.content}</p>
             </div>
+
+            {/* Show previous reply if any */}
+            {isReplied && feedbackItem.replyContent && (
+              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-gray-800 font-medium">
+                  <span className="font-bold">Reply:</span> {feedbackItem.replyContent}
+                </p>
+                {feedbackItem.replyDate && (
+                  <p className="text-gray-500 text-sm mt-1">Replied on {feedbackItem.replyDate}</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Reply Editor */}
           <FormRow label="Reply" alignTop>
             <div className="border border-black rounded-lg shadow-sm w-full">
-              <EditorToolbar />
+              <EditorToolbar disabled={isReplied} />
               <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
                 className="w-full h-[300px] sm:h-[400px] p-6 text-lg sm:text-xl font-roboto resize-none focus:outline-none rounded-b-lg"
                 placeholder="Type your reply here..."
+                disabled={isReplied}
               />
             </div>
           </FormRow>
 
           {/* Submit Button */}
-          <div className="grid grid-cols-1 md:grid-cols-[140px_1fr] lg:grid-cols-[180px_1fr] gap-4 md:gap-8">
-            {/* Empty div to offset the button to match the FormRow layout */}
-            <div className="hidden md:block"></div>
-            <div className="flex justify-end">
-              <button
-                onClick={handleSubmit}
-                className="w-full sm:w-[200px] h-[56px] bg-[#4CAF50] text-white rounded-lg text-2xl font-bold font-roboto hover:opacity-90 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2"
-              >
-                Submit
-              </button>
+          {!isReplied && (
+            <div className="grid grid-cols-1 md:grid-cols-[140px_1fr] lg:grid-cols-[180px_1fr] gap-4 md:gap-8">
+              <div className="hidden md:block"></div>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleSubmit}
+                  className="w-full sm:w-[200px] h-[56px] bg-[#4CAF50] text-white rounded-lg text-2xl font-bold font-roboto hover:opacity-90 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2"
+                >
+                  Submit
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       <Footer />

@@ -15,6 +15,9 @@ import ViewTutors from "../pages/ViewTutorsPage";
 // import PrivateRouter from "./PrivateRouter"; // nếu cần dùng sau này
 import TutorProfilePage from "@/pages/TutorProfilePage";
 import AllCoursesPages from "@/pages/AllCoursePages.jsx";
+import ViewFeedbackStudent from "../pages/Feedback/ViewFeedStudent";
+import Progress from "../pages/ProgressPage";
+import SchedulePage from "../pages/SchedulePage/SchedulePage";
 
 export default function AppRouter() {
   const location = useLocation();
@@ -31,7 +34,11 @@ export default function AppRouter() {
       "/my-sessions": "My Sessions | Tutor Support System",
       // // từ router 2
       // "/login": "Login | Tutor Support System",
+
+      "/view-feedback": "View Feedback | Tutor Support System",
+      "/schedule": "Schedule | Tutor Support System",
       "/profile": "Profile | Tutor Support System",
+      "/progress": "Progress | Tutor Support System",
       "/viewtutors": "Tutors | Tutor Support System",
       "/feedback/detail": "Feedback Detail | Tutor Support System",
       "/feedbacks": "Feedback List | Tutor Support System",
@@ -47,7 +54,7 @@ export default function AppRouter() {
     <Routes>
       {/* Redirect trang chủ */}
       <Route path="/" element={<Navigate to="/home" replace />} />
-
+      <Route path="/view-feedback" element={<ViewFeedbackStudent />} />
       {/* ========== ROUTES TỪ FILE 1 ========== */}
       <Route path="/home" element={<HomePage />} />
       <Route path="/Course" element={<ViewCourseDetail />} />
@@ -59,6 +66,8 @@ export default function AppRouter() {
       <Route path="/my-sessions" element={<AllCoursesPages />} />
       {/* <Route path="/login" element={<LoginPage />} /> */}
       <Route path="/profile" element={<Profile />} />
+      <Route path="/schedule" element={<SchedulePage />} />
+      <Route path="/progress" element={<Progress />} />
       <Route path="/viewtutors" element={<ViewTutors />} />
 
       <Route path="/feedbacks/detail" element={<FeedbackDetail />} />

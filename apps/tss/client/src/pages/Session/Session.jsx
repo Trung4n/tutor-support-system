@@ -5,48 +5,34 @@ import { useParams, useNavigate } from "react-router-dom";
 import { CalendarDays, Clock, MapPin, User, Video } from "lucide-react";
 import { useState } from "react";
 
-// mock data tạm – sau này thay bằng API
-const mockSessions = [
-  {
-    id: "1",
-    title: "Revision for Final Exam",
-    courseTitle: "Calculus I",
-    tutorName: "Hoàng Tunilever",
-    date: "Tuesday, November 4, 2025",
-    time: "19:00 - 21:00",
-    locationType: "Online (Google Meet)",
-    locationLink: "https://meet.google.com/abc-defg-hij",
-    capacity: 40,
-    registered: 28,
-    status: "upcoming", // upcoming / ongoing / finished
-    description:
-      "This session focuses on revising key topics for the final exam: limits, derivatives, and integration techniques. We will walk through typical exam-style questions and clarify common misconceptions.",
-    learningGoals: [
-      "Review core concepts likely to appear on the exam.",
-      "Practice solving exam-style problems under time pressure.",
-      "Clarify any remaining questions from students.",
-    ],
-  },
-];
+// IMPORT mock của bạn
+import { mockCoursesStudent } from "../mockSession/mockCoursesStudent";
+import { mockCoursesTutor } from "../mockSession/mockCoursesTutor";
+import { getCurrentRole } from "../../utils/auth";
 
 export default function SessionDetailPage() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
-  // Initialize state directly with mock data to avoid setState inside useEffect
-  const [session] = useState(() => mockSessions.find((s) => s.id === sessionId) || mockSessions[0]);
+
+  const role = getCurrentRole(); // student | tutor
+
+  const allSessions = role === "student" ? mockCoursesStudent : mockCoursesTutor("John Doe");
+
+  const data = allSessions.find((s) => String(s.id) === String(sessionId));
+
+  const [session] = useState(data);
 
   const handleJoin = () => {
     if (!session) return;
-    // TODO: mở link thật / navigate
     window.open(session.locationLink, "_blank", "noopener,noreferrer");
   };
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-[#DFDCDC]">
+      <div className="min-h-screen">
         <Header />
         <div className="mt-20 flex items-center justify-center text-gray-600">
-          Loading session...
+          Session not found...
         </div>
         <Footer />
       </div>
@@ -54,7 +40,7 @@ export default function SessionDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#DFDCDC]">
+    <div className="min-h-screen">
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 mt-20 mb-10">
@@ -63,15 +49,13 @@ export default function SessionDetailPage() {
         <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main info */}
           <section className="bg-white rounded-xl shadow-md p-6 col-span-2">
-            {/* Session title */}
             <h1 className="text-3xl font-bold text-[#001A72] mb-2">{session.title}</h1>
 
-            {/* Course + tutor */}
             <p className="text-sm text-gray-600 mb-4">
               Session for{" "}
               <span
                 className="text-[#0054A6] font-semibold cursor-pointer hover:underline"
-                onClick={() => navigate("/courses/1")} // TODO: truyền courseId thật
+                onClick={() => navigate("/courses/" + session.id)}
               >
                 {session.courseTitle}
               </span>
@@ -94,18 +78,16 @@ export default function SessionDetailPage() {
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#001A72]" />
-                <span>{session.locationType}</span>
+                <span>{session.locationType || session.mode}</span>
               </div>
             </div>
 
-            {/* Description */}
             <h2 className="text-xl font-semibold mb-2">About this session</h2>
             <p className="text-gray-700 mb-6">{session.description}</p>
 
-            {/* Learning goals */}
             <h2 className="text-xl font-semibold mb-2">Learning goals</h2>
             <ul className="list-disc ml-5 text-gray-700 space-y-1">
-              {session.learningGoals.map((g, idx) => (
+              {session.learningGoals?.map((g, idx) => (
                 <li key={idx}>{g}</li>
               ))}
             </ul>
@@ -113,26 +95,21 @@ export default function SessionDetailPage() {
 
           {/* Side panel */}
           <aside className="flex flex-col gap-6">
-            {/* status & join */}
             <div className="bg-white rounded-xl shadow-md p-5">
               <h2 className="font-bold text-lg mb-3">Session status</h2>
 
               <div className="mb-3">
                 <span
                   className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                  ${
-                    session.status === "upcoming"
-                      ? "bg-green-100 text-green-700"
-                      : session.status === "ongoing"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-gray-200 text-gray-600"
-                  }`}
+                    ${
+                      session.status === "upcoming"
+                        ? "bg-green-100 text-green-700"
+                        : session.status === "ongoing"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-gray-200 text-gray-600"
+                    }`}
                 >
-                  {session.status === "upcoming"
-                    ? "Upcoming"
-                    : session.status === "ongoing"
-                      ? "Ongoing"
-                      : "Finished"}
+                  {session.status}
                 </span>
               </div>
 
@@ -155,12 +132,11 @@ export default function SessionDetailPage() {
               </button>
             </div>
 
-            {/* extra info */}
             <div className="bg-white rounded-xl shadow-md p-5">
               <h2 className="font-bold text-lg mb-3">Quick info</h2>
               <ul className="text-sm text-gray-700 space-y-2">
                 <li>• Please join 5–10 minutes early.</li>
-                <li>• Prepare your questions about calculus topics.</li>
+                <li>• Prepare your questions.</li>
                 <li>• Make sure your microphone is working.</li>
               </ul>
             </div>

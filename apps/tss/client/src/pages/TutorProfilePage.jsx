@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { Star } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
+
 export default function TutorProfilePage() {
+  const navigate = useNavigate();
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth()); // 0-11
   const [year, setYear] = useState(today.getFullYear());
@@ -172,14 +175,10 @@ export default function TutorProfilePage() {
 
               {/* Time picker + button */}
               <div className="mt-4">
-                <div className="text-sm font-semibold mb-1">Select Time</div>
-                <input
-                  type="time"
-                  defaultValue="09:30"
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-
-                <button className="mt-3 w-full bg-[#030391] text-white py-2 rounded-lg text-sm hover:bg-blue-700 transition">
+                <button
+                  onClick={() => navigate("/schedule")}
+                  className="mt-3 w-full bg-[#030391] text-white py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+                >
                   BOOK NOW
                 </button>
               </div>

@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 export default function SuggestedSessions() {
+  const navigate = useNavigate();
+
   const sessions = [
     {
       title: "Calculus I",
@@ -83,7 +87,10 @@ export default function SuggestedSessions() {
                 <p className="text-gray-600 text-sm mt-2">{item.mode}</p>
 
                 <div className="flex justify-between items-center mt-5">
-                  <button className="text-[#142b63] text-sm font-semibold border border-[#142b63] px-4 py-1.5 rounded-full hover:bg-[#142b63] hover:text-white transition-all">
+                  <button
+                    onClick={() => alert(item.title)}
+                    className="text-[#142b63] text-sm font-semibold border border-[#142b63] px-4 py-1.5 rounded-full hover:bg-[#142b63] hover:text-white transition-all"
+                  >
                     View Detail
                   </button>
 
@@ -97,7 +104,10 @@ export default function SuggestedSessions() {
         </div>
 
         <div className="w-full flex justify-end mt-6">
-          <button className="bg-[#ffffff] rounded-lg text-[#0024b3] px-8 py-2 font-semibold hover:bg-[#1488d8] hover:text-white transition-all">
+          <button
+            onClick={() => navigate("/my-sessions") || window.scroll(0, 0)}
+            className="bg-[#ffffff] rounded-lg text-[#0024b3] px-8 py-2 font-semibold hover:bg-[#1488d8] hover:text-white transition-all"
+          >
             View more {">>"}
           </button>
         </div>

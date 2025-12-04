@@ -71,7 +71,7 @@ export default function ViewTutorsPage() {
   const [tutors, setTutors] = useState([]);
 
   useEffect(() => {
-    setTutors(generateRandomTutors(300));
+    setTutors(generateRandomTutors(700));
   }, []);
 
   function tutorsTab({ item }) {
