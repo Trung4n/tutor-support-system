@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "@/api/authApi";
 
@@ -14,16 +14,32 @@ export default function LoginForm() {
     e.preventDefault();
     if (loading) return;
 
+    // Tự kiểm tra rỗng (đề phòng trường hợp required không chạy)
+    if (!username || !password) {
+      setShowError(true);
+      return;
+    }
+
     setLoading(true);
     setShowError(false);
 
     try {
-      await authApi.login(username, password);
-      console.log("Login thành công");
-      window.location.href = "http://localhost:4001";
-    } catch (err) {
-      setShowError(true);
+      const res = await authApi.login(username, password);
+      // const res = 100;
+      console.log("[LoginForm] API CALLED, response =", res);
+      // const token = 10;
+      const token = res.data.accessToken;
 
+      const user = res.data.user;
+      // const user = 10;
+      // Encode user để truyền qua query
+      const encodedUser = encodeURIComponent(JSON.stringify(user));
+
+      // ✅ RẤT QUAN TRỌNG: redirect sang /home (KHÔNG phải "/")
+      window.location.href = `http://localhost:4001/home?token=${token}&user=${encodedUser}`;
+    } catch (err) {
+      console.error("Login error:", err);
+      setShowError(true);
       setTimeout(() => setShowError(false), 4000);
     } finally {
       setLoading(false);
@@ -45,7 +61,6 @@ export default function LoginForm() {
       className="bg-[#f5f5f5] p-4 sm:p-5 border border-[#ddd] rounded-sm relative"
     >
       <h2 className="text-[#990033] text-lg font-bold mb-0">Enter your Username and Password</h2>
-      <div className="mb-2 pb-2 border-b border-[#ddd] text-sm text-[#444]"></div>
 
       <div
         className={`absolute top-[-10px] left-1/2 transform -translate-x-1/2 px-3 py-2 rounded-sm text-white bg-red-600 shadow-md transition-all duration-500 ${
@@ -56,38 +71,27 @@ export default function LoginForm() {
       </div>
 
       <div className="mb-4">
-        <label htmlFor="username" className="block text-[#333] font-semibold mb-1">
-          Username
-        </label>
+        <label className="block font-semibold mb-1">Username</label>
         <input
-          id="username"
-          name="username"
-          type="text"
-          autoComplete="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-[292px] border border-[#ccc] rounded-sm px-2 py-1.5 bg-[#ffffdd] focus:outline-none focus:ring-1 focus:ring-[#aaa]"
           required
+          className="w-full border px-2 py-1"
         />
       </div>
 
       <div className="mb-4">
-        <label htmlFor="password" className="block text-[#333] font-semibold mb-1">
-          Password
-        </label>
+        <label className="block font-semibold mb-1">Password</label>
         <input
-          id="password"
-          name="password"
           type="password"
-          autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-[292px] border border-[#ccc] rounded-sm px-2 py-1.5 bg-[#ffffdd] focus:outline-none focus:ring-1 focus:ring-[#aaa]"
           required
+          className="w-full border px-2 py-1"
         />
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex gap-2">
         <button
           type="submit"
           disabled={loading}
@@ -99,7 +103,7 @@ export default function LoginForm() {
         <button
           type="button"
           onClick={handleReset}
-          className="bg-[#0066cc] hover:bg-[#004c99] text-white text-sm px-4 py-1.5 rounded-sm font-medium border border-[#004c99]"
+          className="bg-[#6c757d] hover:bg-[#5a6268] text-white text-sm px-4 py-1.5 rounded-sm font-medium border border-[#5a6268]"
         >
           Clear
         </button>

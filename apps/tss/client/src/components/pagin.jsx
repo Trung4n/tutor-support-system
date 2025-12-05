@@ -1,10 +1,15 @@
 import { ChevronDown, ChevronLeft, ChevronRight, Search, Settings2 } from "lucide-react";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getCurrentRole } from "../utils/auth";
 
 export default function Pagin({ sessions }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
+
+  const navigate = useNavigate();
+  const role = getCurrentRole(); // "student" | "tutor"
 
   const totalPages = Math.ceil(sessions.length / itemsPerPage);
 
@@ -14,6 +19,11 @@ export default function Pagin({ sessions }) {
   const currentSessions = sessions.slice(indexOfFirst, indexOfLast);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  function checkPermissions() {
+    const canCreateReport = Math.random() < 0.2;
+    return canCreateReport;
+  }
 
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -29,7 +39,6 @@ export default function Pagin({ sessions }) {
         pageNumbers.push(1, "...", currentPage, "...", totalPages);
       }
     }
-
     return pageNumbers;
   };
 
@@ -37,7 +46,13 @@ export default function Pagin({ sessions }) {
     <section className="bg-white rounded-lg shadow-sm p-6 pb-12">
       {/* HEADER */}
       <div className="flex justify-between items-end mb-6">
-        <h2 className="text-2xl font-bold text-blue-900">My Sessions</h2>
+        <div className="text-2xl font-bold text-blue-900">My Sessions</div>
+
+        <button className={` bg-blue-900 text-xl font-semibold text-white px-4 py-1.5 rounded-full ${role === "tutor" ? "" : "hidden"}`}
+                onClick={() => navigate("/create-session")}>
+          Create Session
+        </button>
+
       </div>
 
       {/* FILTER */}
@@ -64,41 +79,70 @@ export default function Pagin({ sessions }) {
       </div>
 
       {/* GRID – SESSION CARDS */}
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-        {currentSessions.map((item, idx) => (
-          <div
-            key={idx}
-            className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-all"
-          >
-            <img src={item.img} alt={item.title} className="w-full h-40 object-cover" />
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-8">
+        {currentSessions.map((item, idx) => {
+          const canCreateReport = checkPermissions();
 
-            <div className="p-5">
-              <h3 className="text-[#142b63] font-semibold text-lg">{item.title}</h3>
+          return (
+            <div
+              key={idx}
+              className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-all"
+            >
+              <img src={item.img} alt={item.title} className="w-full h-40 object-cover" />
 
-              <p className="text-gray-700 text-sm mt-1 flex items-center gap-2">
-                <span>{item.tutor}</span> ⭐ <span>{item.rating}</span>
-              </p>
+              <div className="p-5">
+                <h3 className="text-[#142b63] font-semibold text-lg">{item.title}</h3>
 
-              <p className="text-gray-600 text-sm mt-2">{item.mode}</p>
+                <p className="text-gray-700 text-sm mt-1 flex items-center gap-2">
+                  <span>{item.tutorName || item.tutor}</span> ⭐ <span>{item.rating}</span>
+                </p>
 
-              <div className="flex justify-center items-center mt-5">
-                <button className="text-[#142b63] text-sm font-semibold border border-[#142b63] px-4 py-1.5 rounded-full hover:bg-[#142b63] hover:text-white transition-all">
-                  View Detail
-                </button>
-                {/* 
-                <button className="bg-[#142b63] text-white text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all">
-                  Register
-                </button> */}
+                <p className="text-gray-600 text-sm mt-2">{item.locationType || item.mode}</p>
+
+                <div className="flex items-center mt-5 mb-5 gap-3">
+                  {/* View Detail */}
+                  <button
+                    onClick={() => navigate("/Course/"+item.id)}
+                    className="text-[#142b63] text-sm font-semibold border border-[#142b63] px-4 py-1.5 rounded-full hover:bg-[#142b63] hover:text-white transition-all"
+                  >
+                    View Detail
+                  </button>
+
+                  {role !== "tutor" && (
+                    <button
+                      onClick={() => navigate("/send")}
+                      className="bg-[#1a237e] text-white text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
+                    >
+                      Send Feedback
+                    </button>
+                  )}
+                  {/* TUTOR ONLY */}
+                  {role === "tutor" && (
+                    <button
+                      onClick={() => navigate("/feedbacks")}
+                      className="bg-[#1a237e] text-white text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
+                    >
+                      View Feedbacks
+                    </button>
+                  )}
+                </div>
+                {role === "tutor" && canCreateReport && (
+                  <button
+                    onClick={() => navigate("/progress")}
+                    className="bg-[#1a237e] max-w-[500px] w-full text-white text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
+                  >
+                    Create Report
+                  </button>
+                )}
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-4">
-          {/* PREV */}
           <button
             onClick={() => paginate(currentPage - 1)}
             disabled={currentPage === 1}
@@ -107,7 +151,6 @@ export default function Pagin({ sessions }) {
             <ChevronLeft className="w-5 h-5" />
           </button>
 
-          {/* PAGE NUMBERS */}
           {getPageNumbers().map((num, index) =>
             num === "..." ? (
               <span
@@ -131,7 +174,6 @@ export default function Pagin({ sessions }) {
             )
           )}
 
-          {/* NEXT */}
           <button
             onClick={() => paginate(currentPage + 1)}
             disabled={currentPage === totalPages}
@@ -146,13 +188,5 @@ export default function Pagin({ sessions }) {
 }
 
 Pagin.propTypes = {
-  sessions: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      tutor: PropTypes.string.isRequired,
-      rating: PropTypes.string.isRequired,
-      mode: PropTypes.string.isRequired,
-      img: PropTypes.string.isRequired,
-    })
-  ).isRequired,
+  sessions: PropTypes.array.isRequired,
 };

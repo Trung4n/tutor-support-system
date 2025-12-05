@@ -17,10 +17,14 @@ import {
 } from "lucide-react";
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
+import { feedbackList } from "./mockFeedbackData.js"; // MOCK DATA
+
+const CURRENT_USER = "Nguyễn Trung An"; // Người đang login (Student)
 
 const HEADER_TITLE_COLOR = "text-[#0a1f44]";
 const SUBMIT_BUTTON_COLOR = "bg-[#4CAF50]";
 
+/* -------------------------- Toolbar Editor -------------------------- */
 const EditorToolbar = () => {
   const tools = [
     { icon: Bold, label: "Bold" },
@@ -52,13 +56,17 @@ const EditorToolbar = () => {
   );
 };
 
-// Helper: Consistent Form Row Layout
+/* ------------------------------ Form Row ------------------------------ */
 const FormRow = ({ label, children, alignTop = false }) => (
   <div
-    className={`grid grid-cols-1 md:grid-cols-[140px_1fr] lg:grid-cols-[180px_1fr] gap-4 md:gap-8 ${alignTop ? "items-start" : "items-center"}`}
+    className={`grid grid-cols-1 md:grid-cols-[140px_1fr] lg:grid-cols-[180px_1fr] gap-4 md:gap-8 ${
+      alignTop ? "items-start" : "items-center"
+    }`}
   >
     <label
-      className={`text-xl sm:text-2xl lg:text-3xl font-bold font-roboto text-gray-800 ${alignTop ? "pt-3" : ""}`}
+      className={`text-xl sm:text-2xl lg:text-3xl font-bold font-roboto text-gray-800 ${
+        alignTop ? "pt-3" : ""
+      }`}
     >
       {label}
     </label>
@@ -66,6 +74,7 @@ const FormRow = ({ label, children, alignTop = false }) => (
   </div>
 );
 
+/* -------------------------- MAIN COMPONENT --------------------------- */
 export default function SendFeedback() {
   const navigate = useNavigate();
 
@@ -75,7 +84,7 @@ export default function SendFeedback() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const tutors = ["Nguyễn Văn A", "Nguyễn Vũ Quốc An", "Nguyễn Huy Lượng", "Nguyễn Trung An"];
+  const tutors = ["Mai Đức Trung", "Bùi Xuân Giang", " Trần Thị Quế Nguyệt", " Nguyễn Minh Tâm"];
 
   const filteredTutors = tutors.filter((tutor) =>
     tutor.toLowerCase().includes(searchQuery.toLowerCase())
@@ -88,37 +97,55 @@ export default function SendFeedback() {
   };
 
   const handleSubmit = () => {
-    console.log({ selectedTutor, title, content });
-    navigate("/feedbacks");
+    if (!selectedTutor || !title || !content) {
+      alert("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    const newFeedback = {
+      id: Date.now(),
+      sender: CURRENT_USER, // Người gửi
+      receiver: selectedTutor, // Người nhận
+      date: new Date().toLocaleDateString("vi-VN"),
+      title,
+      content,
+      avatar:
+        "https://api.builder.io/api/v1/image/assets/TEMP/94056da088f34e4161fb673971f19468cfcc93bc",
+      replied: false,
+      replyContent: "",
+      replyDate: null,
+    };
+
+    feedbackList.unshift(newFeedback);
+
+    navigate("/view-feedback");
     window.scrollTo(0, 0);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       <Header />
+
       <div className="max-w-[1440px] mx-auto px-4 mt-10 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-        {/* Header - Aligned with ViewFeedback base */}
         <div className="flex items-center gap-4 mb-8 sm:mb-12">
           <button
-            onClick={() => navigate("/feedbacks")}
+            onClick={() => navigate(-1)}
             className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 hover:bg-gray-200 rounded-full transition-colors"
           >
             <ArrowLeft className={`w-6 h-6 sm:w-8 sm:h-8 ${HEADER_TITLE_COLOR}`} />
           </button>
+
           <h1
             className={`text-4xl sm:text-5xl lg:text-[40px] font-bold ${HEADER_TITLE_COLOR} font-roboto`}
           >
-            Back to Feedback
+            Back
           </h1>
         </div>
 
-        {/* Main Content Card - Aligned width to 1256px */}
         <div className="bg-white rounded-lg p-6 sm:p-8 lg:p-12 max-w-[1256px] mx-auto shadow-sm">
           <div className="space-y-8 max-w-[1100px]">
-            {/* 1. Send To Field */}
             <FormRow label="Send to" alignTop={!!selectedTutor}>
               <div className="flex flex-col gap-4">
-                {/* Search Box */}
                 <div className="relative max-w-[487px]">
                   <input
                     type="text"
@@ -129,39 +156,31 @@ export default function SendFeedback() {
                       setShowDropdown(true);
                     }}
                     onFocus={() => setShowDropdown(true)}
-                    className="w-full h-[50px] sm:h-[62px] pl-5 pr-14 border border-black rounded-lg text-lg sm:text-xl font-roboto placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-900/20"
+                    className="w-full h-[50px] sm:h-[62px] pl-5 pr-14 border border-black rounded-lg text-lg sm:text-xl font-roboto"
                   />
-                  <button className="absolute right-0 top-0 h-full w-[60px] bg-[#1a237e] flex items-center justify-center rounded-r-lg hover:opacity-90 transition-opacity">
+                  <button className="absolute right-0 top-0 h-full w-[60px] bg-[#1a237e] flex items-center justify-center rounded-r-lg">
                     <Search className="w-6 h-6 text-white" />
                   </button>
 
-                  {/* Dropdown Results */}
                   {showDropdown && searchQuery && (
-                    <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 shadow-xl max-h-60 overflow-y-auto rounded-lg">
-                      {filteredTutors.length > 0 ? (
-                        filteredTutors.map((tutor, index) => (
-                          <button
-                            key={index}
-                            type="button"
-                            onClick={() => handleTutorSelect(tutor)}
-                            className="w-full text-left px-5 py-3 text-lg font-roboto hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors"
-                          >
-                            {tutor}
-                          </button>
-                        ))
-                      ) : (
-                        <div className="px-5 py-3 text-gray-500">No tutors found</div>
-                      )}
+                    <div className="absolute z-20 w-full mt-1 bg-white border shadow-xl max-h-60 overflow-y-auto rounded-lg">
+                      {filteredTutors.map((tutor, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => handleTutorSelect(tutor)}
+                          className="w-full text-left px-5 py-3 text-lg hover:bg-gray-50"
+                        >
+                          {tutor}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
 
-                {/* Selected Tutor Badge */}
                 {selectedTutor && (
-                  <div className="w-fit min-w-[250px] h-[60px] border border-black rounded-lg flex items-center px-6 bg-blue-50/50">
-                    <span className="text-xl font-medium font-roboto text-gray-900">
-                      {selectedTutor}
-                    </span>
+                  <div className="w-fit min-w-[250px] h-[60px] border rounded-lg flex items-center px-6 bg-blue-50/50">
+                    <span className="text-xl font-medium">{selectedTutor}</span>
                     <button
                       onClick={() => setSelectedTutor("")}
                       className="ml-4 text-gray-400 hover:text-red-500"
@@ -173,35 +192,30 @@ export default function SendFeedback() {
               </div>
             </FormRow>
 
-            {/* 2. Title Field */}
             <FormRow label="Title">
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter title"
-                className="w-full max-w-[712px] h-[50px] sm:h-[70px] px-5 border border-black rounded-lg text-lg sm:text-xl font-roboto focus:outline-none focus:ring-2 focus:ring-blue-900/20"
+                className="w-full h-[70px] px-5 border rounded-lg text-xl"
               />
             </FormRow>
 
-            {/* 3. Content Field */}
             <FormRow label="Content" alignTop>
-              <div className="border border-black rounded-lg shadow-sm w-full">
+              <div className="border rounded-lg w-full">
                 <EditorToolbar />
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full h-[300px] sm:h-[400px] p-6 text-lg sm:text-xl font-roboto resize-none focus:outline-none rounded-b-lg"
-                  placeholder="Type your feedback here..."
+                  className="w-full h-[350px] p-6 text-xl resize-none"
                 />
               </div>
             </FormRow>
 
-            {/* Submit Button */}
-            <div className="flex justify-end pt-4 md:ml-[180px] md:pl-8">
+            <div className="flex justify-end">
               <button
                 onClick={handleSubmit}
-                className={`w-full sm:w-[200px] h-[56px] ${SUBMIT_BUTTON_COLOR} text-white rounded-lg text-2xl font-bold font-roboto hover:opacity-90 transition-all active:scale-95 shadow-md flex items-center justify-center gap-2`}
+                className={`w-[200px] h-[56px] ${SUBMIT_BUTTON_COLOR} text-white rounded-lg text-2xl font-bold`}
               >
                 Submit
               </button>
@@ -209,6 +223,7 @@ export default function SendFeedback() {
           </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );
