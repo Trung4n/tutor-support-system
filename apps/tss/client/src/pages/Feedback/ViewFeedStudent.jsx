@@ -1,5 +1,5 @@
-import { Plus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Plus, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import ListItem from "../../components/ListItem.jsx";
 import { feedbackList } from "./mockFeedbackData.js";
 import Header from "../../components/Header.jsx";
@@ -7,6 +7,7 @@ import Footer from "../../components/Footer.jsx";
 
 // Giả sử user login tên "Nguyễn Trung An"
 const CURRENT_USER = "Nguyễn Trung An";
+const HEADER_TITLE_COLOR = "text-[#0a1f44]";
 
 const FeedbackItem = ({ item }) => {
   return (
@@ -46,18 +47,32 @@ const FeedbackItem = ({ item }) => {
 };
 
 export default function ViewFeedbackStudent() {
-  // Hiển thị feedback do CURRENT_USER gửi
+  const navigate = useNavigate();
+
   const filteredList = feedbackList.filter(
     (fb) => fb.sender?.trim().toLowerCase() === CURRENT_USER.toLowerCase()
   );
 
   return (
-    <div className="min-h-screen">
+    // ✅ FIX FOOTER: Layout chuẩn
+    <div className="min-h-screen flex flex-col">
       <Header />
 
-      <div className="max-w-[1440px] mx-auto mt-10 px-4 sm:px-6 lg:px-8 py-12">
+      {/* ✅ PHẦN NỘI DUNG – flexible để đẩy footer xuống */}
+      <div className="flex-1 max-w-[1440px] mx-auto mt-10 px-4 sm:px-6 lg:px-8 py-12 w-full">
         <div className="flex items-center justify-between mb-10 sm:mb-14">
-          <h1 className="text-4xl font-bold text-gray-800">My Sent Feedback</h1>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/my-sessions")}
+              className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              <ArrowLeft className={`w-3 h-3 sm:w-6 sm:h-6 ${HEADER_TITLE_COLOR}`} />
+            </button>
+
+            <h1 className={`text-2xl sm:text-3xl lg:text-3xl font-bold ${HEADER_TITLE_COLOR}`}>
+              Back
+            </h1>
+          </div>
 
           <Link
             to="/send"
@@ -70,7 +85,7 @@ export default function ViewFeedbackStudent() {
 
         <ListItem
           itemList={filteredList}
-          title=""
+          title="My Sent Feedback"
           itemTab={FeedbackItem}
           columns={1}
           itemsPerPage={6}
@@ -78,6 +93,7 @@ export default function ViewFeedbackStudent() {
         />
       </div>
 
+      {/* ✅ FOOTER luôn nằm đáy */}
       <Footer />
     </div>
   );

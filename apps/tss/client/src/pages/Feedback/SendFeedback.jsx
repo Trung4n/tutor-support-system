@@ -78,26 +78,11 @@ const FormRow = ({ label, children, alignTop = false }) => (
 export default function SendFeedback() {
   const navigate = useNavigate();
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedTutor, setSelectedTutor] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const tutors = ["Mai Đức Trung", "Bùi Xuân Giang", " Trần Thị Quế Nguyệt", " Nguyễn Minh Tâm"];
-
-  const filteredTutors = tutors.filter((tutor) =>
-    tutor.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleTutorSelect = (tutor) => {
-    setSelectedTutor(tutor);
-    setSearchQuery("");
-    setShowDropdown(false);
-  };
-
   const handleSubmit = () => {
-    if (!selectedTutor || !title || !content) {
+    if (!title || !content) {
       alert("Vui lòng nhập đầy đủ thông tin!");
       return;
     }
@@ -105,7 +90,7 @@ export default function SendFeedback() {
     const newFeedback = {
       id: Date.now(),
       sender: CURRENT_USER, // Người gửi
-      receiver: selectedTutor, // Người nhận
+      receiver: "Mai Đức Trung", // Không còn chọn tutor
       date: new Date().toLocaleDateString("vi-VN"),
       title,
       content,
@@ -123,7 +108,7 @@ export default function SendFeedback() {
   };
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <Header />
 
       <div className="max-w-[1440px] mx-auto px-4 mt-10 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
@@ -136,7 +121,7 @@ export default function SendFeedback() {
           </button>
 
           <h1
-            className={`text-4xl sm:text-5xl lg:text-[40px] font-bold ${HEADER_TITLE_COLOR} font-roboto`}
+            className={`text-2xl sm:text-3xl lg:text-3xl font-bold ${HEADER_TITLE_COLOR} font-roboto`}
           >
             Back
           </h1>
@@ -144,54 +129,6 @@ export default function SendFeedback() {
 
         <div className="bg-white rounded-lg p-6 sm:p-8 lg:p-12 max-w-[1256px] mx-auto shadow-sm">
           <div className="space-y-8 max-w-[1100px]">
-            <FormRow label="Send to" alignTop={!!selectedTutor}>
-              <div className="flex flex-col gap-4">
-                <div className="relative max-w-[487px]">
-                  <input
-                    type="text"
-                    placeholder="Find Tutor"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setShowDropdown(true);
-                    }}
-                    onFocus={() => setShowDropdown(true)}
-                    className="w-full h-[50px] sm:h-[62px] pl-5 pr-14 border border-black rounded-lg text-lg sm:text-xl font-roboto"
-                  />
-                  <button className="absolute right-0 top-0 h-full w-[60px] bg-[#1a237e] flex items-center justify-center rounded-r-lg">
-                    <Search className="w-6 h-6 text-white" />
-                  </button>
-
-                  {showDropdown && searchQuery && (
-                    <div className="absolute z-20 w-full mt-1 bg-white border shadow-xl max-h-60 overflow-y-auto rounded-lg">
-                      {filteredTutors.map((tutor, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => handleTutorSelect(tutor)}
-                          className="w-full text-left px-5 py-3 text-lg hover:bg-gray-50"
-                        >
-                          {tutor}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {selectedTutor && (
-                  <div className="w-fit min-w-[250px] h-[60px] border rounded-lg flex items-center px-6 bg-blue-50/50">
-                    <span className="text-xl font-medium">{selectedTutor}</span>
-                    <button
-                      onClick={() => setSelectedTutor("")}
-                      className="ml-4 text-gray-400 hover:text-red-500"
-                    >
-                      ×
-                    </button>
-                  </div>
-                )}
-              </div>
-            </FormRow>
-
             <FormRow label="Title">
               <input
                 type="text"

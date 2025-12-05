@@ -81,12 +81,12 @@ export default function CreateSession() {
   };
 
   return (
-    <div className="min-h-screen bg-[#e6e6e6]">
+    <div className="w-full bg-[#e6e6e6]">
       <Header />
 
-      <main className="max-w-[900px] mx-auto px-6 pt-24 pb-8">
+      <main className="max-w-[1500px] mx-auto px-6 pt-24 pb-8">
         {/* Back to My Sessions */}
-        <div className="flex items-center gap-4 mb-8 sm:mb-12">
+        <div className="flex items-center gap-4 mb-6 sm:mb-6">
           <button
             onClick={() => navigate("/my-sessions")}
             className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 hover:bg-gray-200 rounded-full transition-colors"
@@ -95,9 +95,9 @@ export default function CreateSession() {
           </button>
 
           <h1
-            className={`text-3xl sm:text-4xl lg:text-[32px] font-bold ${HEADER_TITLE_COLOR} font-roboto`}
+            className={`text-xl sm:text-2xl lg:text-3xl font-bold ${HEADER_TITLE_COLOR} font-roboto`}
           >
-            Back to My Sessions
+            Back
           </h1>
         </div>
 

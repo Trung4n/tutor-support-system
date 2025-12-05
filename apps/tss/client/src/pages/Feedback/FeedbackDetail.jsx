@@ -133,8 +133,8 @@ export default function FeedbackDetail() {
           >
             <ArrowLeft className="w-6 h-6 sm:w-8 sm:h-8 text-[#0a1f44]" />
           </button>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0a1f44] font-roboto">
-            Back to Feedback
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#0a1f44] font-roboto">
+            Back
           </h1>
         </div>
 

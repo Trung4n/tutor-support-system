@@ -11,16 +11,16 @@ import { getCurrentRole, getCurrentUser } from "../../utils/auth.js";
 const studentEvents = [
   // --- MONDAY (01/12) ---
   {
-    id: "st-3",
-    title: "Quản trị dự án (Project Mgmt)",
-    start: "2025-12-01T07:30:00",
-    end: "2025-12-01T10:30:00",
+    id: "tt-3",
+    title: "Tutor - Nhập môn Lập trình (C++)",
+    start: "2025-12-01T13:00:00",
+    end: "2025-12-01T15:00:00",
     extendedProps: {
-      tutor: "NGUYỄN VĂN A",
-      session: "Lý thuyết: PERT & CPM",
+      tutor: "Mai Đức Trung",
+      session: "Con trỏ & Mảng",
       type: "offline",
-      location: "H6-101",
-      role: "student",
+      location: "H2-101",
+      role: "tutor",
     },
   },
 
@@ -204,7 +204,6 @@ export default function Mysched() {
           {/* Header + chọn role */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <h2 className="text-xl font-bold text-[#030391]">My Schedule</h2>
-
           </div>
 
           {/* Calendar */}
@@ -213,52 +212,51 @@ export default function Mysched() {
               <FullCalendarBasic events={events} onEventClick={handleEventClick} />
             </div>
 
-          {selectedEvent && (
-            <div className="mt-6 border-t pt-4 ">
-              <h3 className="text-lg font-semibold mb-2 text-[#030391]">Selected session</h3>
+            {selectedEvent && (
+              <div className="mt-6 border-t pt-4 ">
+                <h3 className="text-lg font-semibold mb-2 text-[#030391]">Selected session</h3>
 
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Title:</span> {selectedEvent.title}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Tutor:</span> {selectedEvent.tutor || "N/A"}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Session:</span> {selectedEvent.session || "N/A"}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Type:</span> {selectedEvent.type || "N/A"}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Location:</span>{" "}
-                {selectedEvent.type === "offline"
-                  ? selectedEvent.location || "N/A"
-                  : selectedEvent.location || "Google Meet link"}
-              </p>
-              {selectedEvent.start && (
                 <p className="text-sm text-gray-700">
-                  <span className="font-medium">Time:</span>{" "}
-                  {selectedEvent.start.toLocaleString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    day: "2-digit",
-                    month: "2-digit",
-                  })}
-                  {selectedEvent.end &&
-                    " – " +
-                      selectedEvent.end.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                  <span className="font-medium">Title:</span> {selectedEvent.title}
                 </p>
-              )}
-            </div>
-          )}
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Tutor:</span> {selectedEvent.tutor || "N/A"}
+                </p>
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Session:</span> {selectedEvent.session || "N/A"}
+                </p>
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Type:</span> {selectedEvent.type || "N/A"}
+                </p>
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Location:</span>{" "}
+                  {selectedEvent.type === "offline"
+                    ? selectedEvent.location || "N/A"
+                    : selectedEvent.location || "Google Meet link"}
+                </p>
+                {selectedEvent.start && (
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">Time:</span>{" "}
+                    {selectedEvent.start.toLocaleString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      day: "2-digit",
+                      month: "2-digit",
+                    })}
+                    {selectedEvent.end &&
+                      " – " +
+                        selectedEvent.end.toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                  </p>
+                )}
+              </div>
+            )}
           </section>
-
         </section>
       </section>
-  <Footer />
+      <Footer />
     </div>
   );
 }
