@@ -21,8 +21,7 @@ export default function Pagin({ sessions }) {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   function checkPermissions() {
-    const canCreateReport = Math.random() < 0.2;
-    return canCreateReport;
+    return Math.random() < 0.2;
   }
 
   const getPageNumbers = () => {
@@ -48,11 +47,14 @@ export default function Pagin({ sessions }) {
       <div className="flex justify-between items-end mb-6">
         <div className="text-2xl font-bold text-blue-900">My Sessions</div>
 
-        <button className={` bg-blue-900 text-xl font-semibold text-white px-4 py-1.5 rounded-full ${role === "tutor" ? "" : "hidden"}`}
-                onClick={() => navigate("/create-session")}>
-          Create Session
-        </button>
-
+        {role === "tutor" && (
+          <button
+            className="bg-blue-900 text-xl font-semibold text-white px-4 py-1.5 rounded-full"
+            onClick={() => navigate("/create-session")}
+          >
+            Create Session
+          </button>
+        )}
       </div>
 
       {/* FILTER */}
@@ -99,37 +101,50 @@ export default function Pagin({ sessions }) {
 
                 <p className="text-gray-600 text-sm mt-2">{item.locationType || item.mode}</p>
 
-                <div className="flex items-center mt-5 mb-5 gap-3">
-                  {/* View Detail */}
+                {/* ✅ 3 NÚT NẰM NGANG HÀNG – KHÔNG LỆCH */}
+                <div className="flex gap-3 mt-5 mb-5">
+                  {/* View */}
                   <button
-                    onClick={() => navigate("/Course/"+item.id)}
-                    className="text-[#142b63] text-sm font-semibold border border-[#142b63] px-4 py-1.5 rounded-full hover:bg-[#142b63] hover:text-white transition-all"
+                    onClick={() => navigate("/Course/" + item.id)}
+                    className="flex-1 text-[#142b63] text-sm font-semibold border border-[#142b63]
+                               px-3 py-1.5 rounded-full hover:bg-[#142b63] hover:text-white transition-all"
                   >
-                    View Detail
+                    View
                   </button>
 
-                  {role !== "tutor" && (
+                  {/* Student */}
+                  {role !== "tutor" ? (
                     <button
-                      onClick={() => navigate("/send")}
-                      className="bg-[#1a237e] text-white text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
+                      onClick={() => navigate("/view-feedback")}
+                      className="flex-1 items-end bg-[#1a237e] text-white text-sm font-semibold
+                                 px-3 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
                     >
-                      Send Feedback
+                      Feedback
                     </button>
+                  ) : (
+                    <div className="flex-1" />
                   )}
-                  {/* TUTOR ONLY */}
-                  {role === "tutor" && (
+
+                  {/* Tutor */}
+                  {role === "tutor" ? (
                     <button
                       onClick={() => navigate("/feedbacks")}
-                      className="bg-[#1a237e] text-white text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
+                      className="flex-1 bg-[#1a237e] text-white text-sm font-semibold
+                                 px-3 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
                     >
-                      View Feedbacks
+                      Feedbacks
                     </button>
+                  ) : (
+                    <div className="flex-1" />
                   )}
                 </div>
+
+                {/* ✅ CREATE REPORT */}
                 {role === "tutor" && canCreateReport && (
                   <button
                     onClick={() => navigate("/progress")}
-                    className="bg-[#1a237e] max-w-[500px] w-full text-white text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
+                    className="bg-[#1a237e] w-full text-white text-sm font-semibold
+                               px-4 py-1.5 rounded-full hover:bg-[#0f1f4c] transition-all"
                   >
                     Create Report
                   </button>
@@ -146,7 +161,7 @@ export default function Pagin({ sessions }) {
           <button
             onClick={() => paginate(currentPage - 1)}
             disabled={currentPage === 1}
-            className="p-2 border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-2 border rounded hover:bg-gray-100 disabled:opacity-50"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -177,7 +192,7 @@ export default function Pagin({ sessions }) {
           <button
             onClick={() => paginate(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="p-2 border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-2 border rounded hover:bg-gray-100 disabled:opacity-50"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

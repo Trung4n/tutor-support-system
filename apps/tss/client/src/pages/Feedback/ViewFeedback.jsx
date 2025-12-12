@@ -1,5 +1,5 @@
-import { Plus, Eye } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Plus, Eye, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import ListItem from "../../components/ListItem.jsx";
 import { feedbackList } from "./mockFeedbackData.js";
 import Header from "../../components/Header.jsx";
@@ -74,32 +74,40 @@ const FeedbackItem = ({ item }) => {
 };
 
 export default function ViewFeedback() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen">
       <Header />
 
       <div className="max-w-[1440px] mx-auto mt-10 px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center justify-between mb-10 sm:mb-14">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">Feedback</h1>
-          {/* 
-          BUTTON CREATE NEW PROGRESS REPORT */}
-          {/* <Link
-            to="/progress"
-            className="flex items-center gap-2 px-6 py-3 bg-primary text-black rounded-lg hover:opacity-90 transition-opacity font-semibold text-lg shadow-md"
+        {/* Back button */}
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => navigate("/my-sessions")}
+            className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 hover:bg-gray-200 rounded-full transition-colors"
           >
-            <Plus className="w-5 h-5" />
-            Create Teaching Report
-          </Link> */}
+            <ArrowLeft className="w-6 h-6 sm:w-8 sm:h-8 text-[#0a1f44]" />
+          </button>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">Back</h1>
         </div>
 
-        <ListItem
-          itemList={feedbackList}
-          title=""
-          itemTab={FeedbackItem}
-          columns={1}
-          itemsPerPage={6}
-          haveSearch={false}
-        />
+        {/* Feedback List Container */}
+        <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm">
+          {/* Title inside the white container */}
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
+            Feedback
+          </h2>
+
+          <ListItem
+            itemList={feedbackList}
+            title=""
+            itemTab={FeedbackItem}
+            columns={1}
+            itemsPerPage={6}
+            haveSearch={false}
+          />
+        </div>
       </div>
 
       <Footer />
